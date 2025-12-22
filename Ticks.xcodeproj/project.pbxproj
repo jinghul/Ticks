@@ -27,6 +27,7 @@
 		8D61352B2EF8EBF400ABB357 /* Ticks.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Ticks.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D6135382EF8EBF600ABB357 /* TicksTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TicksTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D6135422EF8EBF600ABB357 /* TicksUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TicksUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D61357C2EF8F41100ABB357 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -43,6 +44,11 @@
 		8D6135452EF8EBF600ABB357 /* TicksUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TicksUITests;
+			sourceTree = "<group>";
+		};
+		8D6135552EF8EDD400ABB357 /* .plan */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = .plan;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +81,8 @@
 		8D6135222EF8EBF400ABB357 = {
 			isa = PBXGroup;
 			children = (
+				8D61357C2EF8F41100ABB357 /* .gitignore */,
+				8D6135552EF8EDD400ABB357 /* .plan */,
 				8D61352D2EF8EBF400ABB357 /* Ticks */,
 				8D61353B2EF8EBF600ABB357 /* TicksTests */,
 				8D6135452EF8EBF600ABB357 /* TicksUITests */,
@@ -109,6 +117,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				8D61352D2EF8EBF400ABB357 /* Ticks */,
+				8D6135552EF8EDD400ABB357 /* .plan */,
 			);
 			name = Ticks;
 			packageProductDependencies = (
