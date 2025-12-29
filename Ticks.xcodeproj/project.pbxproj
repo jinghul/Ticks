@@ -58,6 +58,8 @@
 		8D61366D2F01745A00ABB357 /* TicksWidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = TicksWidgetsExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D61366F2F01745A00ABB357 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		8D6136712F01745A00ABB357 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		8D6136FF2F032B8F00ABB357 /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		8D6137002F032B8F00ABB357 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -94,11 +96,6 @@
 		8D6135452EF8EBF600ABB357 /* TicksUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = TicksUITests;
-			sourceTree = "<group>";
-		};
-		8D6135552EF8EDD400ABB357 /* .plan */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = .plan;
 			sourceTree = "<group>";
 		};
 		8D6136732F01745A00ABB357 /* TicksWidgets */ = {
@@ -153,15 +150,16 @@
 		8D6135222EF8EBF400ABB357 = {
 			isa = PBXGroup;
 			children = (
-				8D6136F52F03252600ABB357 /* Shared */,
+				8D6136FF2F032B8F00ABB357 /* CLAUDE.md */,
+				8D6137002F032B8F00ABB357 /* README.md */,
 				8D61357C2EF8F41100ABB357 /* .gitignore */,
-				8D6135552EF8EDD400ABB357 /* .plan */,
+				8D61366E2F01745A00ABB357 /* Frameworks */,
+				8D61352C2EF8EBF400ABB357 /* Products */,
+				8D6136F52F03252600ABB357 /* Shared */,
 				8D61352D2EF8EBF400ABB357 /* Ticks */,
 				8D61353B2EF8EBF600ABB357 /* TicksTests */,
 				8D6135452EF8EBF600ABB357 /* TicksUITests */,
 				8D6136732F01745A00ABB357 /* TicksWidgets */,
-				8D61366E2F01745A00ABB357 /* Frameworks */,
-				8D61352C2EF8EBF400ABB357 /* Products */,
 			);
 			sourceTree = "<group>";
 		};
@@ -205,7 +203,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				8D61352D2EF8EBF400ABB357 /* Ticks */,
-				8D6135552EF8EDD400ABB357 /* .plan */,
 				8D6136F52F03252600ABB357 /* Shared */,
 			);
 			name = Ticks;
