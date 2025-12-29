@@ -10,7 +10,7 @@ import SwiftUI
 struct IconPicker: View {
     @Binding var selectedIcon: String
     @Environment(\.dismiss) private var dismiss
-    
+
     let icons = [
         "timer", "clock", "alarm", "stopwatch",
         "figure.run", "figure.walk", "figure.yoga", "figure.strengthtraining.traditional",
@@ -20,11 +20,11 @@ struct IconPicker: View {
         "moon.stars", "sun.max", "flame", "snowflake",
         "bolt", "star", "sparkles", "music.note"
     ]
-    
+
     let columns = [
         GridItem(.adaptive(minimum: 70))
     ]
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -38,7 +38,7 @@ struct IconPicker: View {
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(selectedIcon == icon ? Color.black : Color.gray.opacity(0.1))
                                     .frame(width: 70, height: 70)
-                                
+
                                 Image(systemName: icon)
                                     .font(.system(size: 28))
                                     .foregroundColor(selectedIcon == icon ? .white : .black)

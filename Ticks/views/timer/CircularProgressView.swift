@@ -11,7 +11,7 @@ struct CircularProgressView: View {
     let progress: Double
     let timeRemaining: TimeInterval
     let intervalLabel: String
-    
+
     var body: some View {
         ZStack {
             // Background circle
@@ -20,7 +20,7 @@ struct CircularProgressView: View {
                     Color.gray.opacity(0.2),
                     lineWidth: 20
                 )
-            
+
             // Progress circle
             Circle()
                 .trim(from: 0, to: progress)
@@ -33,13 +33,13 @@ struct CircularProgressView: View {
                 )
                 .rotationEffect(.degrees(-90))
                 .animation(.linear(duration: 0.1), value: progress)
-            
+
             // Time display
             VStack(spacing: 8) {
                 Text(timeRemaining.formattedTimeWithMillis)
                     .font(.system(size: 56, weight: .medium, design: .rounded))
                     .monospacedDigit()
-                
+
                 Text(intervalLabel)
                     .font(.system(size: 20, weight: .medium))
                     .foregroundColor(.gray)

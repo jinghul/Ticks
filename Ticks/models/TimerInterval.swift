@@ -16,12 +16,12 @@ final class TimerInterval {
     var confirmationTypeRaw: String
     var orderIndex: Int
     var session: TimerSession?
-    
+
     var confirmationType: ConfirmationType {
         get { ConfirmationType(rawValue: confirmationTypeRaw) ?? .automatic }
         set { confirmationTypeRaw = newValue.rawValue }
     }
-    
+
     init(id: UUID = UUID(), label: String, duration: TimeInterval, confirmationType: ConfirmationType = .automatic, orderIndex: Int = 0) {
         self.id = id
         self.label = label
@@ -29,11 +29,11 @@ final class TimerInterval {
         self.confirmationTypeRaw = confirmationType.rawValue
         self.orderIndex = orderIndex
     }
-    
+
     enum ConfirmationType: String, Codable, CaseIterable {
         case automatic = "automatic"
         case manual = "manual"
-        
+
         var displayName: String {
             switch self {
             case .automatic: return "Automatic"

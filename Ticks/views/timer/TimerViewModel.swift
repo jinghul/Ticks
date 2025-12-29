@@ -24,7 +24,7 @@ class TimerViewModel {
     private let notificationManager = NotificationManager.shared
     private var liveActivity: Activity<TimerActivityAttributes>?
     private var updateTimer: Timer?
-    
+
     var currentInterval: TimerInterval? {
         guard let session = currentSession,
               currentIntervalIndex < session.sortedIntervals.count else {
@@ -32,32 +32,34 @@ class TimerViewModel {
         }
         return session.sortedIntervals[currentIntervalIndex]
     }
-    
+
     var progress: Double {
         guard let interval = currentInterval, interval.duration > 0 else { return 0 }
         return 1.0 - (timeRemaining / interval.duration)
     }
-    
+
     var overallProgress: Double {
         guard let session = currentSession else { return 0 }
         let intervals = session.sortedIntervals
         guard !intervals.isEmpty else { return 0 }
-        
+
         var completedDuration: TimeInterval = 0
+
+        // swiftlint:disable identifier_name
         for i in 0..<currentIntervalIndex {
             if i < intervals.count {
                 completedDuration += intervals[i].duration
             }
         }
-        
+
         if let current = currentInterval {
             completedDuration += (current.duration - timeRemaining)
         }
-        
+
         let total = session.totalDuration
         return total > 0 ? completedDuration / total : 0
     }
-    
+
     func start(session: TimerSession) {
         self.currentSession = session
         self.currentIntervalIndex = 0
@@ -69,19 +71,19 @@ class TimerViewModel {
         startLiveActivity()
         startLiveActivityUpdates()
     }
-    
+
     func pause() {
         guard state == .running else { return }
         state = .paused
         stopTimer()
     }
-    
+
     func resume() {
         guard state == .paused else { return }
         state = .running
         startTimer()
     }
-    
+
     func stop() {
         state = .idle
         stopTimer()
@@ -92,7 +94,7 @@ class TimerViewModel {
         currentIntervalIndex = 0
         timeRemaining = 0
     }
-    
+
     func nextInterval() {
         guard let session = currentSession else { return }
 
@@ -122,29 +124,29 @@ class TimerViewModel {
             updateLiveActivity()
         }
     }
-    
+
     func confirmAndContinue() {
         guard state == .waitingForConfirmation else { return }
         HapticManager.shared.intervalStarted()
         state = .running
         startTimer()
     }
-    
+
     private func startTimer() {
         stopTimer()
         startTime = Date()
-        
+
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.tick()
         }
     }
-    
+
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
         startTime = nil
     }
-    
+
     private func tick() {
         guard state == .running else { return }
 

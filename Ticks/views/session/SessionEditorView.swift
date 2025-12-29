@@ -11,17 +11,17 @@ import SwiftData
 struct SessionEditorView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) private var dismiss
-    
+
     @Bindable var session: TimerSession
     let isNew: Bool
-    
+
     @State private var showingIconPicker = false
-    
+
     init(session: TimerSession, isNew: Bool = false) {
         self.session = session
         self.isNew = isNew
     }
-    
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -34,19 +34,19 @@ struct SessionEditorView: View {
                                 RoundedRectangle(cornerRadius: 20)
                                     .fill(Color.black)
                                     .frame(width: 80, height: 80)
-                                
+
                                 Image(systemName: session.iconName)
                                     .font(.system(size: 36))
                                     .foregroundColor(.white)
                             }
                         }
-                        
+
                         // Name field
                         VStack(alignment: .leading, spacing: 8) {
                             Text("SESSION NAME")
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
-                            
+
                             TextField("e.g., Workout", text: $session.name)
                                 .font(.system(size: 20, weight: .medium))
                                 .textFieldStyle(.plain)
@@ -57,32 +57,32 @@ struct SessionEditorView: View {
                         }
                     }
                     .padding(.horizontal)
-                    
+
                     // Intervals Section
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
                             Text("INTERVALS")
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
-                            
+
                             Spacer()
-                            
+
                             Text("Total: \(session.totalDuration.formattedTime)")
                                 .font(.system(size: 12, weight: .medium))
                                 .foregroundColor(.gray)
                         }
                         .padding(.horizontal)
-                        
+
                         if session.intervals.isEmpty {
                             VStack(spacing: 12) {
                                 Image(systemName: "timer")
                                     .font(.system(size: 48))
                                     .foregroundColor(.gray.opacity(0.5))
-                                
+
                                 Text("No intervals yet")
                                     .font(.system(size: 16))
                                     .foregroundColor(.gray)
-                                
+
                                 Text("Add your first interval to get started")
                                     .font(.system(size: 14))
                                     .foregroundColor(.gray.opacity(0.7))
@@ -103,13 +103,13 @@ struct SessionEditorView: View {
                             }
                             .padding(.horizontal)
                         }
-                        
+
                         // Add interval button
                         Button(action: addInterval) {
                             HStack {
                                 Image(systemName: "plus.circle.fill")
                                     .font(.system(size: 20))
-                                
+
                                 Text("Add Interval")
                                     .font(.system(size: 16, weight: .semibold))
                             }
@@ -137,7 +137,7 @@ struct SessionEditorView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") {
                         saveSession()
@@ -151,7 +151,7 @@ struct SessionEditorView: View {
             }
         }
     }
-    
+
     private func addInterval() {
         let newInterval = TimerInterval(
             label: "Interval \(session.intervals.count + 1)",
@@ -160,7 +160,7 @@ struct SessionEditorView: View {
         )
         session.intervals.append(newInterval)
     }
-    
+
     private func deleteInterval(_ interval: TimerInterval) {
         if let index = session.intervals.firstIndex(where: { $0.id == interval.id }) {
             session.intervals.remove(at: index)
@@ -170,7 +170,7 @@ struct SessionEditorView: View {
             }
         }
     }
-    
+
     private func saveSession() {
         // Session is already in the model context, changes are automatically tracked
         try? modelContext.save()
@@ -179,13 +179,15 @@ struct SessionEditorView: View {
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
+
+    // swiftlint:disable force_try
     let container = try! ModelContainer(for: TimerSession.self, configurations: config)
-    
+
     let session = TimerSession(name: "HIIT Workout", iconName: "figure.run")
     let interval1 = TimerInterval(label: "Warm Up", duration: 300, orderIndex: 0)
     let interval2 = TimerInterval(label: "Sprint", duration: 60, orderIndex: 1)
     session.intervals = [interval1, interval2]
-    
+
     return SessionEditorView(session: session, isNew: false)
         .modelContainer(container)
 }

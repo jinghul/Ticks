@@ -66,7 +66,7 @@ extension TicksWidgetsAttributes.ContentState {
     fileprivate static var smiley: TicksWidgetsAttributes.ContentState {
         TicksWidgetsAttributes.ContentState(emoji: "😀")
      }
-     
+
      fileprivate static var starEyes: TicksWidgetsAttributes.ContentState {
          TicksWidgetsAttributes.ContentState(emoji: "🤩")
      }

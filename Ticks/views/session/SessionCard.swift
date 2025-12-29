@@ -13,7 +13,7 @@ struct SessionCard: View {
     let onStart: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack(spacing: 16) {
@@ -22,24 +22,24 @@ struct SessionCard: View {
                     RoundedRectangle(cornerRadius: 16)
                         .fill(Color.black)
                         .frame(width: 64, height: 64)
-                    
+
                     Image(systemName: session.iconName)
                         .font(.system(size: 28))
                         .foregroundColor(.white)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 4) {
                     Text(session.name)
                         .font(.system(size: 24, weight: .regular))
                         .foregroundColor(.black)
-                    
+
                     Text("\(session.intervals.count) interval\(session.intervals.count == 1 ? "" : "s") • \(session.totalDuration.shortFormat)")
                         .font(.system(size: 15))
                         .foregroundColor(.gray)
                 }
-                
+
                 Spacer()
-                
+
                 // Action buttons
                 HStack(spacing: 12) {
                     Button(action: onEdit) {
@@ -50,7 +50,7 @@ struct SessionCard: View {
                             .background(Color.gray.opacity(0.1))
                             .clipShape(Circle())
                     }
-                    
+
                     Button(action: onDelete) {
                         Image(systemName: "trash")
                             .font(.system(size: 16))
@@ -61,7 +61,7 @@ struct SessionCard: View {
                     }
                 }
             }
-            
+
             // Start button
             Button(action: onStart) {
                 Text("Start")
@@ -80,13 +80,15 @@ struct SessionCard: View {
 
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
+
+    // swiftlint:disable force_try
     let container = try! ModelContainer(for: TimerSession.self, configurations: config)
-    
+
     let session = TimerSession(name: "HIIT Workout", iconName: "figure.run")
     let interval1 = TimerInterval(label: "Warm Up", duration: 300, orderIndex: 0)
     let interval2 = TimerInterval(label: "Sprint", duration: 60, orderIndex: 1)
     session.intervals = [interval1, interval2]
-    
+
     return SessionCard(
         session: session,
         onStart: { print("Start") },
