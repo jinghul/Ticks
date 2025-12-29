@@ -47,7 +47,7 @@ struct SessionEditorView: View {
                                 .font(.system(size: 12, weight: .semibold))
                                 .foregroundColor(.gray)
                             
-                            TextField("e.g., HIIT Workout", text: $session.name)
+                            TextField("e.g., Workout", text: $session.name)
                                 .font(.system(size: 20, weight: .medium))
                                 .textFieldStyle(.plain)
                                 .padding()

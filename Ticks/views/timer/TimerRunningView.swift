@@ -9,8 +9,9 @@ import SwiftUI
 
 struct TimerRunningView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel = TimerViewModel()
-    
+
     let session: TimerSession
     
     var body: some View {
@@ -137,6 +138,18 @@ struct TimerRunningView: View {
                 controlButtons
                     .padding(.horizontal)
                     .padding(.bottom, 32)
+            }
+        }
+        .onChange(of: scenePhase) { oldPhase, newPhase in
+            switch newPhase {
+            case .active:
+                viewModel.handleAppBecameActive()
+            case .background:
+                viewModel.handleAppWentToBackground()
+            case .inactive:
+                break
+            @unknown default:
+                break
             }
         }
         .onAppear {

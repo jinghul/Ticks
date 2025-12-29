@@ -11,7 +11,8 @@ import SwiftData
 @main
 struct TicksApp: App {
     let modelContainer: ModelContainer
-    
+    @State private var hasRequestedNotifications = false
+
     init() {
         do {
             modelContainer = try ModelContainer(for: TimerSession.self, TimerInterval.self)
@@ -19,10 +20,18 @@ struct TicksApp: App {
             fatalError("Failed to initialize ModelContainer: \(error)")
         }
     }
-    
+
     var body: some Scene {
         WindowGroup {
             SessionListView()
+                .onAppear {
+                    if !hasRequestedNotifications {
+                        hasRequestedNotifications = true
+                        Task {
+                            await NotificationManager.shared.requestAuthorization()
+                        }
+                    }
+                }
         }
         .modelContainer(modelContainer)
     }
