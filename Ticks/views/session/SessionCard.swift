@@ -33,9 +33,12 @@ struct SessionCard: View {
                         .font(.system(size: 24, weight: .regular))
                         .foregroundColor(.black)
 
-                    Text("\(session.intervals.count) interval\(session.intervals.count == 1 ? "" : "s") • \(session.totalDuration.shortFormat)")
-                        .font(.system(size: 15))
-                        .foregroundColor(.gray)
+                    Text(
+                        "\(session.intervals.count) interval\(session.intervals.count == 1 ? "" : "s") • " +
+                        "\(session.totalDuration.shortFormat)"
+                    )
+                    .font(.system(size: 15))
+                    .foregroundColor(.gray)
                 }
 
                 Spacer()
@@ -79,11 +82,6 @@ struct SessionCard: View {
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-
-    // swiftlint:disable force_try
-    let container = try! ModelContainer(for: TimerSession.self, configurations: config)
-
     let session = TimerSession(name: "HIIT Workout", iconName: "figure.run")
     let interval1 = TimerInterval(label: "Warm Up", duration: 300, orderIndex: 0)
     let interval2 = TimerInterval(label: "Sprint", duration: 60, orderIndex: 1)

@@ -30,20 +30,23 @@ struct IconPicker: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 16) {
                     ForEach(icons, id: \.self) { icon in
-                        Button(action: {
-                            selectedIcon = icon
-                            dismiss()
-                        }) {
-                            ZStack {
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(selectedIcon == icon ? Color.black : Color.gray.opacity(0.1))
-                                    .frame(width: 70, height: 70)
+                        Button(
+                            action: {
+                                selectedIcon = icon
+                                dismiss()
+                            },
+                            label: {
+                                ZStack {
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(selectedIcon == icon ? Color.black : Color.gray.opacity(0.1))
+                                        .frame(width: 70, height: 70)
 
-                                Image(systemName: icon)
-                                    .font(.system(size: 28))
-                                    .foregroundColor(selectedIcon == icon ? .white : .black)
+                                    Image(systemName: icon)
+                                        .font(.system(size: 28))
+                                        .foregroundColor(selectedIcon == icon ? .white : .black)
+                                }
                             }
-                        }
+                        )
                     }
                 }
                 .padding()

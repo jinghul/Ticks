@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import AVFoundation
 import ActivityKit
 
 @Observable
@@ -18,9 +17,10 @@ class TimerViewModel {
     var state: TimerState = .idle
 
     private var timer: Timer?
-    private var startTime: Date?
-    private var backgroundEntryTime: Date?
-    private let backgroundAudio = BackgroundAudioManager.shared
+
+    // Timestamp tracking
+    private var lastTickUptime: TimeInterval? // Monotonic clock for tick calculations
+
     private let notificationManager = NotificationManager.shared
     private var liveActivity: Activity<TimerActivityAttributes>?
     private var updateTimer: Timer?
@@ -45,11 +45,9 @@ class TimerViewModel {
 
         var completedDuration: TimeInterval = 0
 
-        // swiftlint:disable identifier_name
-        for i in 0..<currentIntervalIndex {
-            if i < intervals.count {
-                completedDuration += intervals[i].duration
-            }
+        // swiftlint:disable:next identifier_name
+        for i in 0..<currentIntervalIndex where i < intervals.count {
+            completedDuration += intervals[i].duration
         }
 
         if let current = currentInterval {
@@ -76,19 +74,21 @@ class TimerViewModel {
         guard state == .running else { return }
         state = .paused
         stopTimer()
+        updateLiveActivity()  // Update to show paused state
     }
 
     func resume() {
         guard state == .paused else { return }
+
         state = .running
         startTimer()
+        updateLiveActivity()  // Update with new end date
     }
 
     func stop() {
         state = .idle
         stopTimer()
         endLiveActivity()
-        backgroundAudio.stopBackgroundAudio()
         notificationManager.cancelAllNotifications()
         currentSession = nil
         currentIntervalIndex = 0
@@ -119,6 +119,7 @@ class TimerViewModel {
             } else {
                 HapticManager.shared.intervalStarted()
                 state = .running
+                startTimer()
             }
 
             updateLiveActivity()
@@ -130,11 +131,14 @@ class TimerViewModel {
         HapticManager.shared.intervalStarted()
         state = .running
         startTimer()
+        updateLiveActivity()
     }
 
     private func startTimer() {
         stopTimer()
-        startTime = Date()
+
+        // Initialize last tick time to now
+        lastTickUptime = ProcessInfo.processInfo.systemUptime
 
         timer = Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { [weak self] _ in
             self?.tick()
@@ -144,16 +148,23 @@ class TimerViewModel {
     private func stopTimer() {
         timer?.invalidate()
         timer = nil
-        startTime = nil
+        lastTickUptime = nil
     }
 
     private func tick() {
-        guard state == .running else { return }
+        guard state == .running,
+              let lastTick = lastTickUptime else { return }
 
-        timeRemaining -= 0.1
+        let currentUptime = ProcessInfo.processInfo.systemUptime
+        let elapsed = currentUptime - lastTick
+
+        // Decrement time remaining
+        timeRemaining = max(0, timeRemaining - elapsed)
+
+        // Update for next tick
+        lastTickUptime = currentUptime
 
         if timeRemaining <= 0 {
-            timeRemaining = 0
             nextInterval()
         }
     }
@@ -163,63 +174,21 @@ class TimerViewModel {
     func handleAppWentToBackground() {
         guard state == .running, let session = currentSession else { return }
 
-        backgroundEntryTime = Date()
-
-        // Start silent audio to keep app alive in background
-        backgroundAudio.startBackgroundAudio()
-
-        // Schedule notifications as backup
+        // Schedule notifications as backup (user will still get alerts if app is killed)
         let remainingIntervals = Array(session.sortedIntervals[currentIntervalIndex...])
         notificationManager.scheduleIntervalNotifications(
             intervals: remainingIntervals,
             startDate: Date().addingTimeInterval(timeRemaining)
         )
+
+        // Timestamp calculation handles the timer updates automatically
     }
 
     func handleAppBecameActive() {
-        // Stop background audio
-        backgroundAudio.stopBackgroundAudio()
-
-        // Cancel notifications since we're active
+        // Cancel notifications since we're back in foreground
         notificationManager.cancelAllNotifications()
 
-        guard let backgroundTime = backgroundEntryTime else { return }
-
-        // Calculate elapsed time while backgrounded
-        let elapsed = Date().timeIntervalSince(backgroundTime)
-
-        // Update timer state based on elapsed time
-        if state == .running {
-            updateTimerAfterBackground(elapsedTime: elapsed)
-        }
-
-        backgroundEntryTime = nil
-    }
-
-    private func updateTimerAfterBackground(elapsedTime: TimeInterval) {
-        var remainingElapsed = elapsedTime
-
-        // Process intervals that completed while backgrounded
-        while remainingElapsed > 0 {
-            if remainingElapsed >= timeRemaining {
-                // This interval completed
-                remainingElapsed -= timeRemaining
-
-                // Trigger haptics for completed interval
-                HapticManager.shared.intervalCompleted()
-
-                nextInterval()
-
-                // If we completed the session or hit a manual confirmation, stop processing
-                if state != .running {
-                    break
-                }
-            } else {
-                // Partial interval completion
-                timeRemaining -= remainingElapsed
-                remainingElapsed = 0
-            }
-        }
+        // The tick() method's timestamp calculation automatically syncs to the correct time
     }
 
     // MARK: - Live Activities
@@ -267,13 +236,30 @@ class TimerViewModel {
               let currentInterval = currentInterval,
               let activity = liveActivity else { return }
 
+        // Calculate end date dynamically from current timeRemaining
+        let endDate = Date().addingTimeInterval(timeRemaining)
+
+        let timerStateString: String
+        switch state {
+        case .running:
+            timerStateString = "running"
+        case .paused:
+            timerStateString = "paused"
+        case .waitingForConfirmation:
+            timerStateString = "waiting"
+        case .completed:
+            timerStateString = "completed"
+        case .idle:
+            timerStateString = "idle"
+        }
+
         let newState = TimerActivityAttributes.ContentState(
             currentIntervalLabel: currentInterval.label,
             currentIntervalIndex: currentIntervalIndex,
             totalIntervals: session.sortedIntervals.count,
-            intervalEndDate: Date().addingTimeInterval(timeRemaining),
+            intervalEndDate: endDate,
             overallProgress: overallProgress,
-            timerState: state == .running ? "running" : state == .paused ? "paused" : "waiting",
+            timerState: timerStateString,
             nextIntervalLabel: nextIntervalPreview()
         )
 

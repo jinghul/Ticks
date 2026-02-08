@@ -22,18 +22,21 @@ struct TimerRunningView: View {
             VStack(spacing: 32) {
                 // Header
                 HStack {
-                    Button(action: {
-                        viewModel.stop()
-                        dismiss()
-                    }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 20, weight: .semibold))
-                            .foregroundColor(.black)
-                            .frame(width: 44, height: 44)
-                            .background(Color.white)
-                            .clipShape(Circle())
-                            .shadow(color: .black.opacity(0.1), radius: 5, y: 2)
-                    }
+                    Button(
+                        action: {
+                            viewModel.stop()
+                            dismiss()
+                        },
+                        label: {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.black)
+                                .frame(width: 44, height: 44)
+                                .background(Color.white)
+                                .clipShape(Circle())
+                                .shadow(color: .black.opacity(0.1), radius: 5, y: 2)
+                        }
+                    )
 
                     Spacer()
 
@@ -41,7 +44,7 @@ struct TimerRunningView: View {
                         Text(session.name)
                             .font(.system(size: 18, weight: .semibold))
 
-                        Text("Interval \(viewModel.currentIntervalIndex + 1) of \(session.sortedIntervals.count)")
+                        Text("Interval \(min(viewModel.currentIntervalIndex + 1, session.sortedIntervals.count)) of \(session.sortedIntervals.count)")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                     }
@@ -107,7 +110,11 @@ struct TimerRunningView: View {
                             .foregroundColor(.gray)
 
                         VStack(spacing: 8) {
-                            ForEach(Array(session.sortedIntervals[(viewModel.currentIntervalIndex + 1)...].prefix(3))) { interval in
+                            ForEach(
+                                Array(
+                                    session.sortedIntervals[(viewModel.currentIntervalIndex + 1)...].prefix(3)
+                                )
+                            ) { interval in
                                 HStack {
                                     Circle()
                                         .fill(Color.gray.opacity(0.3))
@@ -162,13 +169,51 @@ struct TimerRunningView: View {
         switch viewModel.state {
         case .running:
             HStack(spacing: 16) {
-                Button(action: {
-                    viewModel.pause()
-                }) {
-                    HStack {
-                        Image(systemName: "pause.fill")
+                Button(
+                    action: {
+                        viewModel.pause()
+                    },
+                    label: {
+                        HStack {
+                            Image(systemName: "pause.fill")
+                                .font(.system(size: 20))
+                            Text("Pause")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.black)
+                        .cornerRadius(16)
+                    }
+                )
+
+                Button(
+                    action: {
+                        viewModel.nextInterval()
+                    },
+                    label: {
+                        Image(systemName: "forward.fill")
                             .font(.system(size: 20))
-                        Text("Pause")
+                            .foregroundColor(.black)
+                            .frame(width: 56, height: 56)
+                            .background(Color.white)
+                            .cornerRadius(16)
+                            .shadow(color: .black.opacity(0.1), radius: 5, y: 2)
+                    }
+                )
+            }
+
+        case .paused:
+            Button(
+                action: {
+                    viewModel.resume()
+                },
+                label: {
+                    HStack {
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 20))
+                        Text("Resume")
                             .font(.system(size: 17, weight: .semibold))
                     }
                     .foregroundColor(.white)
@@ -177,57 +222,31 @@ struct TimerRunningView: View {
                     .background(Color.black)
                     .cornerRadius(16)
                 }
-
-                Button(action: {
-                    viewModel.nextInterval()
-                }) {
-                    Image(systemName: "forward.fill")
-                        .font(.system(size: 20))
-                        .foregroundColor(.black)
-                        .frame(width: 56, height: 56)
-                        .background(Color.white)
-                        .cornerRadius(16)
-                        .shadow(color: .black.opacity(0.1), radius: 5, y: 2)
-                }
-            }
-
-        case .paused:
-            Button(action: {
-                viewModel.resume()
-            }) {
-                HStack {
-                    Image(systemName: "play.fill")
-                        .font(.system(size: 20))
-                    Text("Resume")
-                        .font(.system(size: 17, weight: .semibold))
-                }
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(Color.black)
-                .cornerRadius(16)
-            }
+            )
 
         case .waitingForConfirmation:
             VStack(spacing: 16) {
                 Text("Ready to continue?")
                     .font(.system(size: 18, weight: .semibold))
 
-                Button(action: {
-                    viewModel.confirmAndContinue()
-                }) {
-                    HStack {
-                        Image(systemName: "checkmark.circle.fill")
-                            .font(.system(size: 20))
-                        Text("Continue")
-                            .font(.system(size: 17, weight: .semibold))
+                Button(
+                    action: {
+                        viewModel.confirmAndContinue()
+                    },
+                    label: {
+                        HStack {
+                            Image(systemName: "checkmark.circle.fill")
+                                .font(.system(size: 20))
+                            Text("Continue")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 56)
+                        .background(Color.green)
+                        .cornerRadius(16)
                     }
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 56)
-                    .background(Color.green)
-                    .cornerRadius(16)
-                }
+                )
             }
 
         case .completed:
@@ -239,17 +258,20 @@ struct TimerRunningView: View {
                 Text("Session Complete!")
                     .font(.system(size: 24, weight: .semibold))
 
-                Button(action: {
-                    dismiss()
-                }) {
-                    Text("Done")
-                        .font(.system(size: 17, weight: .semibold))
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity)
-                        .frame(height: 56)
-                        .background(Color.black)
-                        .cornerRadius(16)
-                }
+                Button(
+                    action: {
+                        dismiss()
+                    },
+                    label: {
+                        Text("Done")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 56)
+                            .background(Color.black)
+                            .cornerRadius(16)
+                    }
+                )
             }
 
         case .idle:

@@ -26,7 +26,13 @@ final class TimerSession {
         intervals.sorted { $0.orderIndex < $1.orderIndex }
     }
 
-    init(id: UUID = UUID(), name: String, iconName: String = "timer", intervals: [TimerInterval] = [], createdDate: Date = Date()) {
+    init(
+        id: UUID = UUID(),
+        name: String,
+        iconName: String = "timer",
+        intervals: [TimerInterval] = [],
+        createdDate: Date = Date()
+    ) {
         self.id = id
         self.name = name
         self.iconName = iconName

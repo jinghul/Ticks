@@ -14,6 +14,7 @@ struct SessionListView: View {
 
     @State private var showingEditor = false
     @State private var sessionToEdit: TimerSession?
+    @State private var isNewSession = false
     @State private var showingTimer = false
     @State private var sessionToRun: TimerSession?
 
@@ -43,6 +44,7 @@ struct SessionListView: View {
                                     },
                                     onEdit: {
                                         sessionToEdit = session
+                                        isNewSession = false
                                         showingEditor = true
                                     },
                                     onDelete: {
@@ -61,15 +63,21 @@ struct SessionListView: View {
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: createNewSession) {
-                        Image(systemName: "plus.circle.fill")
-                            .font(.system(size: 28))
-                            .foregroundColor(.black)
+                        Image(systemName: "plus")
+                            .foregroundStyle(.black)
                     }
                 }
             }
             .sheet(isPresented: $showingEditor) {
                 if let session = sessionToEdit {
-                    SessionEditorView(session: session, isNew: false)
+                    if isNewSession {
+                        SessionEditorView(session: session, isNew: true) { savedSession in
+                            modelContext.insert(savedSession)
+                            try? modelContext.save()
+                        }
+                    } else {
+                        SessionEditorView(session: session, isNew: false)
+                    }
                 }
             }
             .fullScreenCover(isPresented: $showingTimer) {
@@ -118,9 +126,9 @@ struct SessionListView: View {
     }
 
     private func createNewSession() {
-        let newSession = TimerSession(name: "", iconName: "timer")
-        modelContext.insert(newSession)
+        let newSession = TimerSession(name: "Timer", iconName: "timer")
         sessionToEdit = newSession
+        isNewSession = true
         showingEditor = true
     }
 
@@ -133,7 +141,7 @@ struct SessionListView: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
 
-    // swiftlint:disable force_try
+    // swiftlint:disable:next force_try
     let container = try! ModelContainer(for: TimerSession.self, configurations: config)
 
     // Add sample data

@@ -41,6 +41,21 @@ A iOS timer app for creating custom timer sessions.
    - Monitor countdown from the Dynamic Island
    - Swipe to dismiss when timer completes
 
+## Project Structure
+
+```
+Ticks/
+├── Ticks/                      # Main app target
+│   ├── models/                 # SwiftData models
+│   ├── views/                  # SwiftUI views
+│   ├── Utilities/             # Helpers and managers
+│   └── TicksApp.swift         # App entry point
+├── TicksWidgets/              # Widget extension
+├── Shared/                    # Shared code
+├── TicksTests/                # Unit tests
+└── TicksUITests/              # UI tests
+```
+
 ## Running the App
 
 ### From Xcode
@@ -57,21 +72,3 @@ xcodebuild -scheme Ticks -project Ticks.xcodeproj \
 xcodebuild test -scheme Ticks -project Ticks.xcodeproj \
   -destination 'platform=iOS Simulator,name=iPhone 15'
 ```
-
-## Project Structure
-
-```
-Ticks/
-├── Ticks/                      # Main app target
-│   ├── models/                 # SwiftData models
-│   ├── views/                  # SwiftUI views
-│   ├── Utilities/             # Helpers and managers
-│   └── TicksApp.swift         # App entry point
-├── TicksWidgets/              # Widget extension
-├── Shared/                    # Shared code
-├── TicksTests/                # Unit tests
-└── TicksUITests/              # UI tests
-```
-
-## Author
-Jing Lei (@jlei)

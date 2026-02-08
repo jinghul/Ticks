@@ -51,14 +51,17 @@ struct IntervalRow: View {
                     .cornerRadius(8)
 
                 // Edit button
-                Button(action: { isEditing.toggle() }) {
-                    Image(systemName: isEditing ? "checkmark" : "pencil")
-                        .font(.system(size: 14))
-                        .foregroundColor(.gray)
-                        .frame(width: 32, height: 32)
-                        .background(Color.gray.opacity(0.1))
-                        .clipShape(Circle())
-                }
+                Button(
+                    action: { isEditing.toggle() },
+                    label: {
+                        Image(systemName: isEditing ? "checkmark" : "pencil")
+                            .font(.system(size: 14))
+                            .foregroundColor(.gray)
+                            .frame(width: 32, height: 32)
+                            .background(Color.gray.opacity(0.1))
+                            .clipShape(Circle())
+                    }
+                )
 
                 // Delete button
                 Button(action: onDelete) {
@@ -130,25 +133,31 @@ struct DurationPicker: View {
         HStack(spacing: 16) {
             // Minutes
             HStack {
-                Button(action: {
-                    if minutes > 0 {
-                        minutes -= 1
+                Button(
+                    action: {
+                        if minutes > 0 {
+                            minutes -= 1
+                        }
+                    },
+                    label: {
+                        Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.gray)
                     }
-                }) {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.gray)
-                }
+                )
 
                 Text("\(minutes)")
                     .font(.system(size: 32, weight: .semibold))
                     .frame(width: 60)
 
-                Button(action: { if minutes < 99 { minutes += 1 } }) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.black)
-                }
+                Button(
+                    action: { if minutes < 99 { minutes += 1 } },
+                    label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.black)
+                    }
+                )
             }
 
             Text(":")
@@ -156,21 +165,27 @@ struct DurationPicker: View {
 
             // Seconds
             HStack {
-                Button(action: { if seconds > 0 { seconds -= 1 } }) {
-                    Image(systemName: "minus.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.gray)
-                }
+                Button(
+                    action: { if seconds > 0 { seconds -= 1 } },
+                    label: {
+                        Image(systemName: "minus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.gray)
+                    }
+                )
 
                 Text(String(format: "%02d", seconds))
                     .font(.system(size: 32, weight: .semibold))
                     .frame(width: 60)
 
-                Button(action: { if seconds < 59 { seconds += 1 } }) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 24))
-                        .foregroundColor(.black)
-                }
+                Button(
+                    action: { if seconds < 59 { seconds += 1 } },
+                    label: {
+                        Image(systemName: "plus.circle.fill")
+                            .font(.system(size: 24))
+                            .foregroundColor(.black)
+                    }
+                )
             }
         }
         .padding()
@@ -182,7 +197,7 @@ struct DurationPicker: View {
 #Preview {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
 
-    // swiftlint:disable force_try
+    // swiftlint:disable:next force_try
     let container = try! ModelContainer(for: TimerInterval.self, configurations: config)
 
     let interval = TimerInterval(label: "Work", duration: 300, confirmationType: .automatic, orderIndex: 0)

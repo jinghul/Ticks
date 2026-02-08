@@ -11,10 +11,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Building and Running
 ```bash
 # Build the main app
-xcodebuild -scheme Ticks -project Ticks.xcodeproj build
+xcodebuild -scheme Ticks -project Ticks.xcodeproj -sdk iphonesimulator build
 
 # Run tests
-xcodebuild test -scheme Ticks -project Ticks.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 15'
+xcodebuild test -scheme Ticks -project Ticks.xcodeproj -sdk iphonesimulator -destination 'platform=iOS Simulator,OS=latest''
 
 # Build widget extension
 xcodebuild -scheme TicksWidgetsExtension -project Ticks.xcodeproj build
@@ -71,7 +71,6 @@ Singleton managers handle cross-cutting concerns:
 
 - **HapticManager** - Provides haptic feedback for interval events
 - **NotificationManager** - Schedules notifications for background intervals
-- **BackgroundAudioManager** - Plays silent audio to keep timer alive in background
 
 ### View Architecture
 ```
@@ -90,7 +89,7 @@ TimerRunningView (active timer)
 
 1. **SwiftData Relationships**: TimerSession has cascade delete on intervals, ensuring data integrity
 2. **Observable Pattern**: TimerViewModel uses `@Observable` macro for reactive state updates
-3. **Singleton Services**: Managers (Haptic, Notification, BackgroundAudio) use shared instances
+3. **Singleton Services**: Managers (Haptic, Notification) use shared instances
 4. **Order Preservation**: Intervals use `orderIndex` rather than array position for stable ordering
 5. **Confirmation Types**: Intervals can be automatic (continuous) or manual (wait for user tap)
 
@@ -103,10 +102,12 @@ TimerRunningView (active timer)
 - The `@Relationship` with `deleteRule: .cascade` ensures intervals are deleted with their session
 
 ### Background Timer Execution
-The timer continues running in the background using:
-1. Silent audio playback (BackgroundAudioManager)
-2. Backup notifications scheduled for each interval
-3. Time synchronization when app returns to foreground (see `updateTimerAfterBackground`)
+The timer continues tracking time in the background using:
+1. Timestamp-based calculations with monotonic clock (ProcessInfo.systemUptime)
+2. Backup notifications scheduled for each interval (in case app is terminated)
+3. Automatic time synchronization via Live Activity updates
+
+Note: If the app is terminated by iOS, timer stops but notifications continue firing.
 
 ### Live Activities
 - Check `ActivityAuthorizationInfo().areActivitiesEnabled` before starting activities
